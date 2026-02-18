@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Company } from '../lib/types'
-import { loginWithAccessCode, registerCompany } from '../lib/auth'
+import { loginWithAccessCode, registerCompany, checkRateLimit, recordLoginAttempt } from '../lib/auth'
 import Spinner from '../components/Spinner'
 
 interface Props {
@@ -20,6 +20,12 @@ export default function LoginPage({ onLogin }: Props) {
       setError('アクセスコードを入力してください')
       return
     }
+    const rateCheck = checkRateLimit()
+    if (!rateCheck.allowed) {
+      const min = Math.ceil(rateCheck.remainingSeconds / 60)
+      setError(`ログイン試行回数が上限に達しました。${min}分後に再試行してください。`)
+      return
+    }
     setLoading(true)
     setError('')
     const company = await loginWithAccessCode(accessCode.trim())
@@ -27,6 +33,7 @@ export default function LoginPage({ onLogin }: Props) {
     if (company) {
       onLogin(company)
     } else {
+      recordLoginAttempt()
       setError('アクセスコードが見つかりません。正しいコードを入力してください。')
     }
   }
@@ -106,12 +113,12 @@ export default function LoginPage({ onLogin }: Props) {
 
           <input
             type="text"
-            inputMode="numeric"
-            maxLength={6}
+            autoCapitalize="characters"
+            maxLength={12}
             value={accessCode}
-            onChange={(e) => setAccessCode(e.target.value.replace(/[^0-9]/g, ''))}
-            placeholder="6桁のコード"
-            className="w-full text-center text-3xl tracking-[0.5em] py-4 border-2 border-gray-300 rounded-xl focus:border-navy focus:outline-none mb-4"
+            onChange={(e) => setAccessCode(e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase())}
+            placeholder="アクセスコード"
+            className="w-full text-center text-2xl tracking-[0.2em] py-4 border-2 border-gray-300 rounded-xl focus:border-navy focus:outline-none mb-4 font-mono"
           />
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}

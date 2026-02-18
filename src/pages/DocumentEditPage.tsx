@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import type { Company, DocumentItem } from '../lib/types'
 import { supabase } from '../lib/supabase'
 import { formatCurrency, toDateInputValue, addDays, UNITS } from '../lib/utils'
+import { sanitizeText } from '../lib/validation'
 import Spinner from '../components/Spinner'
 import PdfPreview from '../components/PdfPreview'
 
@@ -98,6 +99,7 @@ export default function DocumentEditPage({ company }: Props) {
         .from('documents')
         .select('*')
         .eq('id', id)
+        .eq('company_id', company.id)
         .single()
 
       if (!doc) {
@@ -179,24 +181,24 @@ export default function DocumentEditPage({ company }: Props) {
     const docData = {
       company_id: company.id,
       doc_type: form.doc_type,
-      doc_number: form.doc_number,
-      client_name: form.client_name.trim(),
-      project_name: form.project_name || null,
-      project_location: form.project_location || null,
+      doc_number: sanitizeText(form.doc_number, 50),
+      client_name: sanitizeText(form.client_name, 100),
+      project_name: sanitizeText(form.project_name, 200) || null,
+      project_location: sanitizeText(form.project_location, 200) || null,
       issue_date: form.issue_date,
       expiry_date: form.doc_type === 'estimate' ? form.expiry_date || null : null,
       payment_due: form.doc_type === 'invoice' ? form.payment_due || null : null,
       subtotal,
       tax,
       total,
-      notes: form.notes || null,
+      notes: sanitizeText(form.notes, 2000) || null,
     }
 
     let docId = existingDocId
 
     if (docId) {
       // 更新
-      const { error } = await supabase.from('documents').update(docData).eq('id', docId)
+      const { error } = await supabase.from('documents').update(docData).eq('id', docId).eq('company_id', company.id)
       if (error) {
         setMessage('保存に失敗しました')
         setSaving(false)

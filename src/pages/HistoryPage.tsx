@@ -107,8 +107,14 @@ export default function HistoryPage({ company }: Props) {
 
   const handleDelete = async (docId: string) => {
     if (!confirm('この書類を削除しますか？')) return
-    await supabase.from('documents').delete().eq('id', docId)
-    setDocuments((prev) => prev.filter((d) => d.id !== docId))
+    const { error } = await supabase
+      .from('documents')
+      .delete()
+      .eq('id', docId)
+      .eq('company_id', company.id)
+    if (!error) {
+      setDocuments((prev) => prev.filter((d) => d.id !== docId))
+    }
   }
 
   return (

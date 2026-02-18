@@ -58,24 +58,37 @@ CREATE TABLE IF NOT EXISTS clients (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- RLSを無効化（MVPフェーズ）
+-- RLS有効化
 ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
 
--- 全てのアクセスを許可するポリシー（anon key用）
-CREATE POLICY "Allow all access on companies" ON companies FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all access on documents" ON documents FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all access on document_items" ON document_items FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all access on clients" ON clients FOR ALL USING (true) WITH CHECK (true);
+-- RLSポリシー（アプリ側でcompany_idフィルタリングを実施）
+CREATE POLICY "companies_select" ON companies FOR SELECT USING (true);
+CREATE POLICY "companies_insert" ON companies FOR INSERT WITH CHECK (true);
+CREATE POLICY "companies_update" ON companies FOR UPDATE USING (true) WITH CHECK (true);
 
--- Storage bucket for company images
+CREATE POLICY "documents_select" ON documents FOR SELECT USING (true);
+CREATE POLICY "documents_insert" ON documents FOR INSERT WITH CHECK (true);
+CREATE POLICY "documents_update" ON documents FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "documents_delete" ON documents FOR DELETE USING (true);
+
+CREATE POLICY "document_items_select" ON document_items FOR SELECT USING (true);
+CREATE POLICY "document_items_insert" ON document_items FOR INSERT WITH CHECK (true);
+CREATE POLICY "document_items_update" ON document_items FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "document_items_delete" ON document_items FOR DELETE USING (true);
+
+CREATE POLICY "clients_select" ON clients FOR SELECT USING (true);
+CREATE POLICY "clients_insert" ON clients FOR INSERT WITH CHECK (true);
+CREATE POLICY "clients_delete" ON clients FOR DELETE USING (true);
+
+-- Storage bucket
 INSERT INTO storage.buckets (id, name, public) VALUES ('company-images', 'company-images', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Storage policy for public access
-CREATE POLICY "Allow public read on company-images" ON storage.objects FOR SELECT USING (bucket_id = 'company-images');
-CREATE POLICY "Allow public insert on company-images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'company-images');
-CREATE POLICY "Allow public update on company-images" ON storage.objects FOR UPDATE USING (bucket_id = 'company-images');
-CREATE POLICY "Allow public delete on company-images" ON storage.objects FOR DELETE USING (bucket_id = 'company-images');
+-- Storage policies
+CREATE POLICY "storage_public_read" ON storage.objects FOR SELECT USING (bucket_id = 'company-images');
+CREATE POLICY "storage_insert" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'company-images');
+CREATE POLICY "storage_update" ON storage.objects FOR UPDATE USING (bucket_id = 'company-images');
+CREATE POLICY "storage_delete" ON storage.objects FOR DELETE USING (bucket_id = 'company-images');

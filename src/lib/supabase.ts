@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://wsnnmoxlqbysobcgipfh.supabase.co'
-const supabaseAnonKey = 'sb_publishable_FNeqJX-JEZ140M9t5q1Omg_S0IoO0dS'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase環境変数が設定されていません。.envファイルを確認してください。')
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)

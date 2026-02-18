@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import type { Company } from '../lib/types'
 import { supabase } from '../lib/supabase'
 import { clearAccessCode } from '../lib/auth'
+import { validateImageFile } from '../lib/validation'
 import Spinner from '../components/Spinner'
 
 interface Props {
@@ -32,6 +33,11 @@ export default function SettingsPage({ company, onUpdate }: Props) {
   }
 
   const uploadImage = async (file: File, type: 'logo' | 'seal') => {
+    const validationError = validateImageFile(file)
+    if (validationError) {
+      setMessage(validationError)
+      return
+    }
     setUploading(true)
     const ext = file.name.split('.').pop()
     const path = `${company.id}/${type}.${ext}`
@@ -154,7 +160,8 @@ export default function SettingsPage({ company, onUpdate }: Props) {
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1">電話番号</label>
               <input
-                type="tel"
+                type="text"
+                inputMode="text"
                 value={form.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
                 placeholder="054-xxx-xxxx"
@@ -164,7 +171,8 @@ export default function SettingsPage({ company, onUpdate }: Props) {
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1">FAX番号</label>
               <input
-                type="tel"
+                type="text"
+                inputMode="text"
                 value={form.fax}
                 onChange={(e) => handleChange('fax', e.target.value)}
                 placeholder="054-xxx-xxxx"

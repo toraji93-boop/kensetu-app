@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import type { Company, DocumentItem } from '../lib/types'
@@ -25,22 +25,40 @@ interface Props {
   onClose: () => void
 }
 
+const A4_WIDTH = 794
+const A4_PADDING = 16 // 左右8pxずつ
+
 export default function PdfPreview({ company, form, items, subtotal, tax, total, onClose }: Props) {
   const pdfRef = useRef<HTMLDivElement>(null)
   const [generating, setGenerating] = useState(false)
+  const [scale, setScale] = useState(1)
   const isEstimate = form.doc_type === 'estimate'
-  const title = isEstimate ? '御 見 積 書' : '御 請 求 書'
+
+  useEffect(() => {
+    const updateScale = () => {
+      setScale(Math.min((window.innerWidth - A4_PADDING) / A4_WIDTH, 1))
+    }
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    return () => window.removeEventListener('resize', updateScale)
+  }, [])
 
   const handleDownload = async () => {
     if (!pdfRef.current) return
     setGenerating(true)
 
     try {
-      const canvas = await html2canvas(pdfRef.current, {
+      const el = pdfRef.current
+      const prev = el.style.transform
+      el.style.transform = 'none'
+
+      const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
       })
+
+      el.style.transform = prev
 
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF('p', 'mm', 'a4')
@@ -57,9 +75,9 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-400">
       {/* ヘッダー */}
-      <header className="bg-navy text-white px-4 py-4 sticky top-0 z-10">
+      <header className="bg-navy text-white px-4 py-3 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <button
             onClick={onClose}
@@ -68,15 +86,18 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            編集に戻る
+            戻る
           </button>
           <button
             onClick={handleDownload}
             disabled={generating}
-            className="bg-white text-navy font-bold px-4 py-2 rounded-lg active:bg-gray-100 disabled:opacity-50 flex items-center gap-2"
+            className="bg-white text-navy font-bold px-5 py-2.5 rounded-lg active:bg-gray-100 disabled:opacity-50 flex items-center gap-2 text-base"
           >
             {generating ? (
-              <Spinner className="w-5 h-5 border-navy border-t-transparent" />
+              <>
+                <Spinner className="w-5 h-5 border-navy border-t-transparent" />
+                生成中...
+              </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,19 +110,27 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
         </div>
       </header>
 
-      {/* PDF内容 */}
-      <div className="overflow-x-auto p-4">
-        <div className="min-w-[600px] max-w-[800px] mx-auto">
+      {/* A4プレビュー - 縮小表示 */}
+      <div className="flex justify-center py-2 px-2">
+        <div
+          style={{
+            width: A4_WIDTH * scale,
+            height: 1123 * scale,
+            overflow: 'hidden',
+          }}
+        >
           <div
             ref={pdfRef}
-            className="bg-white shadow-lg"
+            className="bg-white shadow-2xl"
             style={{
-              width: '794px',
+              width: `${A4_WIDTH}px`,
               minHeight: '1123px',
               padding: '50px',
               fontFamily: "'Noto Sans JP', sans-serif",
               fontSize: '12px',
               color: '#111827',
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
             }}
           >
             {/* タイトル */}
@@ -117,12 +146,11 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
                 color: '#1B365D',
               }}
             >
-              {title}
+              {isEstimate ? '御 見 積 書' : '御 請 求 書'}
             </h1>
 
-            {/* 上部レイアウト */}
+            {/* 上部 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-              {/* 左: 宛先 */}
               <div style={{ flex: 1 }}>
                 <div
                   style={{
@@ -140,17 +168,11 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
                   下記の通り{isEstimate ? 'お見積もり' : 'ご請求'}申し上げます。
                 </p>
               </div>
-
-              {/* 右: 書類情報 */}
               <div style={{ textAlign: 'right', fontSize: '12px', lineHeight: '1.8' }}>
                 <p>{isEstimate ? '見積番号' : '請求番号'}: {form.doc_number}</p>
                 <p>発行日: {formatDate(form.issue_date)}</p>
-                {isEstimate && form.expiry_date && (
-                  <p>有効期限: {formatDate(form.expiry_date)}</p>
-                )}
-                {!isEstimate && form.payment_due && (
-                  <p>お支払期限: {formatDate(form.payment_due)}</p>
-                )}
+                {isEstimate && form.expiry_date && <p>有効期限: {formatDate(form.expiry_date)}</p>}
+                {!isEstimate && form.payment_due && <p>お支払期限: {formatDate(form.payment_due)}</p>}
               </div>
             </div>
 
@@ -180,14 +202,7 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
             )}
 
             {/* 明細テーブル */}
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                marginBottom: '20px',
-                fontSize: '12px',
-              }}
-            >
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', fontSize: '12px' }}>
               <thead>
                 <tr style={{ background: '#1B365D', color: 'white' }}>
                   <th style={{ padding: '8px 10px', textAlign: 'center', width: '40px' }}>No</th>
@@ -200,10 +215,7 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
               </thead>
               <tbody>
                 {items.map((item, index) => (
-                  <tr
-                    key={index}
-                    style={{ borderBottom: '1px solid #e5e7eb', background: index % 2 === 1 ? '#f9fafb' : 'white' }}
-                  >
+                  <tr key={index} style={{ borderBottom: '1px solid #e5e7eb', background: index % 2 === 1 ? '#f9fafb' : 'white' }}>
                     <td style={{ padding: '8px 10px', textAlign: 'center' }}>{index + 1}</td>
                     <td style={{ padding: '8px 10px' }}>{item.item_name}</td>
                     <td style={{ padding: '8px 10px', textAlign: 'center' }}>{item.quantity}</td>
@@ -236,85 +248,32 @@ export default function PdfPreview({ company, form, items, subtotal, tax, total,
             {form.notes && (
               <div style={{ marginBottom: '30px' }}>
                 <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>備考:</p>
-                <p style={{ whiteSpace: 'pre-wrap', fontSize: '12px', lineHeight: '1.8', color: '#4b5563' }}>
-                  {form.notes}
-                </p>
+                <p style={{ whiteSpace: 'pre-wrap', fontSize: '12px', lineHeight: '1.8', color: '#4b5563' }}>{form.notes}</p>
               </div>
             )}
 
-            {/* 請求書の場合: 振込先 */}
+            {/* 振込先 */}
             {!isEstimate && company.bank_info && (
-              <div
-                style={{
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  padding: '15px',
-                  marginBottom: '30px',
-                  background: '#fefce8',
-                }}
-              >
+              <div style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '15px', marginBottom: '30px', background: '#fefce8' }}>
                 <p style={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '13px' }}>お振込先</p>
-                <p style={{ whiteSpace: 'pre-wrap', fontSize: '12px', lineHeight: '1.8' }}>
-                  {company.bank_info}
-                </p>
+                <p style={{ whiteSpace: 'pre-wrap', fontSize: '12px', lineHeight: '1.8' }}>{company.bank_info}</p>
               </div>
             )}
 
             {/* 発行者情報 */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-              <div
-                style={{
-                  textAlign: 'left',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  padding: '15px 20px',
-                  minWidth: '250px',
-                  position: 'relative',
-                }}
-              >
+              <div style={{ textAlign: 'left', border: '1px solid #d1d5db', borderRadius: '8px', padding: '15px 20px', minWidth: '250px', position: 'relative' }}>
                 {company.logo_url && (
-                  <img
-                    src={company.logo_url}
-                    alt="ロゴ"
-                    style={{ height: '40px', marginBottom: '8px', objectFit: 'contain' }}
-                    crossOrigin="anonymous"
-                  />
+                  <img src={company.logo_url} alt="ロゴ" style={{ height: '40px', marginBottom: '8px', objectFit: 'contain' }} crossOrigin="anonymous" />
                 )}
-                <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '5px' }}>
-                  {company.company_name}
-                </p>
-                {company.postal_code && (
-                  <p style={{ fontSize: '11px', lineHeight: '1.6' }}>〒{company.postal_code}</p>
-                )}
-                {company.address && (
-                  <p style={{ fontSize: '11px', lineHeight: '1.6' }}>{company.address}</p>
-                )}
-                {company.phone && (
-                  <p style={{ fontSize: '11px', lineHeight: '1.6' }}>TEL: {company.phone}</p>
-                )}
-                {company.fax && (
-                  <p style={{ fontSize: '11px', lineHeight: '1.6' }}>FAX: {company.fax}</p>
-                )}
-                {company.invoice_number && (
-                  <p style={{ fontSize: '11px', lineHeight: '1.6' }}>{company.invoice_number}</p>
-                )}
-
-                {/* 角印 */}
+                <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '5px' }}>{company.company_name}</p>
+                {company.postal_code && <p style={{ fontSize: '11px', lineHeight: '1.6' }}>〒{company.postal_code}</p>}
+                {company.address && <p style={{ fontSize: '11px', lineHeight: '1.6' }}>{company.address}</p>}
+                {company.phone && <p style={{ fontSize: '11px', lineHeight: '1.6' }}>TEL: {company.phone}</p>}
+                {company.fax && <p style={{ fontSize: '11px', lineHeight: '1.6' }}>FAX: {company.fax}</p>}
+                {company.invoice_number && <p style={{ fontSize: '11px', lineHeight: '1.6' }}>{company.invoice_number}</p>}
                 {company.seal_url && (
-                  <img
-                    src={company.seal_url}
-                    alt="角印"
-                    style={{
-                      position: 'absolute',
-                      bottom: '10px',
-                      right: '10px',
-                      width: '70px',
-                      height: '70px',
-                      objectFit: 'contain',
-                      opacity: 0.85,
-                    }}
-                    crossOrigin="anonymous"
-                  />
+                  <img src={company.seal_url} alt="角印" style={{ position: 'absolute', bottom: '10px', right: '10px', width: '70px', height: '70px', objectFit: 'contain', opacity: 0.85 }} crossOrigin="anonymous" />
                 )}
               </div>
             </div>
