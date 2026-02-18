@@ -113,12 +113,12 @@ export default function LoginPage({ onLogin }: Props) {
 
           <input
             type="text"
-            autoCapitalize="characters"
-            maxLength={12}
+            inputMode="numeric"
+            maxLength={6}
             value={accessCode}
-            onChange={(e) => setAccessCode(e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase())}
-            placeholder="アクセスコード"
-            className="w-full text-center text-2xl tracking-[0.2em] py-4 border-2 border-gray-300 rounded-xl focus:border-navy focus:outline-none mb-4 font-mono"
+            onChange={(e) => setAccessCode(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="000000"
+            className="w-full text-center text-2xl tracking-[0.3em] py-4 border-2 border-gray-300 rounded-xl focus:border-navy focus:outline-none mb-4 font-mono"
           />
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}

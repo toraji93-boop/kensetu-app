@@ -9,10 +9,9 @@ const LOCKOUT_KEY = 'kensetu_lockout'
 const ATTEMPTS_KEY = 'kensetu_attempts'
 
 export function generateAccessCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  const array = new Uint8Array(12)
+  const array = new Uint8Array(6)
   crypto.getRandomValues(array)
-  return Array.from(array, (byte) => chars[byte % chars.length]).join('')
+  return Array.from(array, (byte) => String(byte % 10)).join('')
 }
 
 export function getSavedAccessCode(): string | null {
