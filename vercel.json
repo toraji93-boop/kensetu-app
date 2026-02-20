@@ -12,6 +12,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    { "source": "/", "destination": "/lp/index.html" },
+    { "source": "/app/((?!assets/).*)", "destination": "/index.html" },
+    { "source": "/app", "destination": "/index.html" }
   ]
 }

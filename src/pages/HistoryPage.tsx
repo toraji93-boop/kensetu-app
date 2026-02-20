@@ -102,7 +102,7 @@ export default function HistoryPage({ company }: Props) {
     }
 
     setConverting(null)
-    navigate(`/document/edit/${newDoc.id}`)
+    navigate(`/app/document/edit/${newDoc.id}`)
   }
 
   const handleDelete = async (docId: string) => {
@@ -123,7 +123,7 @@ export default function HistoryPage({ company }: Props) {
       <header className="bg-navy text-white px-4 py-4 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/app')}
             className="w-10 h-10 flex items-center justify-center rounded-lg active:bg-white/10"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ export default function HistoryPage({ company }: Props) {
                 className="bg-white border border-gray-200 rounded-xl overflow-hidden"
               >
                 <button
-                  onClick={() => navigate(`/document/edit/${doc.id}`)}
+                  onClick={() => navigate(`/app/document/edit/${doc.id}`)}
                   className="w-full p-4 text-left active:bg-gray-50"
                 >
                   <div className="flex items-center justify-between mb-1">

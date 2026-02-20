@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Company } from '../lib/types'
 
@@ -7,18 +8,52 @@ interface Props {
 
 export default function HomePage({ company }: Props) {
   const navigate = useNavigate()
+  const [copied, setCopied] = useState(false)
+
+  // 紹介する機能
+  const handleShare = async () => {
+    const shareText = `見積書がスマホだけで作れるアプリ、めっちゃ便利だよ。\nインストール不要で、このリンク開くだけ👇\nhttps://mitsukuru.vercel.app`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ミツクル',
+          text: shareText,
+        })
+      } catch {
+        // ユーザーがキャンセルした場合は何もしない
+      }
+    } else {
+      // Web Share API非対応: クリップボードにコピー
+      try {
+        await navigator.clipboard.writeText(shareText)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } catch {
+        // フォールバック
+        const textArea = document.createElement('textarea')
+        textArea.value = shareText
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* ヘッダー */}
       <header className="bg-navy text-white px-4 py-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold">{company.company_name}</h1>
-            <p className="text-sm text-blue-200">建設見積・請求書</p>
+            <p className="text-sm text-blue-200">ミツクル</p>
           </div>
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/app/settings')}
             className="w-10 h-10 flex items-center justify-center rounded-lg active:bg-white/10 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,11 +65,11 @@ export default function HomePage({ company }: Props) {
       </header>
 
       {/* メインコンテンツ */}
-      <main className="max-w-lg mx-auto p-4 pt-6">
+      <main className="max-w-lg mx-auto p-4 pt-6 flex-1 w-full">
         <div className="grid grid-cols-1 gap-4">
           {/* 見積書を作る */}
           <button
-            onClick={() => navigate('/document/new/estimate')}
+            onClick={() => navigate('/app/document/new/estimate')}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
           >
             <div className="w-14 h-14 bg-blue/10 rounded-xl flex items-center justify-center shrink-0">
@@ -50,7 +85,7 @@ export default function HomePage({ company }: Props) {
 
           {/* 請求書を作る */}
           <button
-            onClick={() => navigate('/document/new/invoice')}
+            onClick={() => navigate('/app/document/new/invoice')}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
           >
             <div className="w-14 h-14 bg-navy/10 rounded-xl flex items-center justify-center shrink-0">
@@ -66,7 +101,7 @@ export default function HomePage({ company }: Props) {
 
           {/* 履歴 */}
           <button
-            onClick={() => navigate('/history')}
+            onClick={() => navigate('/app/history')}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
           >
             <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
@@ -79,8 +114,31 @@ export default function HomePage({ company }: Props) {
               <p className="text-sm text-gray-500">過去の見積書・請求書を確認</p>
             </div>
           </button>
+
+          {/* 紹介する */}
+          <button
+            onClick={handleShare}
+            className="bg-accent/5 rounded-2xl p-6 shadow-sm border border-accent/20 flex items-center gap-4 active:bg-accent/10 transition-colors text-left"
+          >
+            <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
+              <svg className="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-accent">紹介する</h2>
+              <p className="text-sm text-gray-500">
+                {copied ? 'コピーしました！' : '知り合いにLINEで教える'}
+              </p>
+            </div>
+          </button>
         </div>
       </main>
+
+      {/* フッター */}
+      <footer className="text-center py-4 text-xs text-gray-400">
+        &copy; 2025 ミツクル
+      </footer>
     </div>
   )
 }

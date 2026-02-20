@@ -103,7 +103,7 @@ export default function SettingsPage({ company, onUpdate }: Props) {
       <header className="bg-navy text-white px-4 py-4 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/app')}
             className="w-10 h-10 flex items-center justify-center rounded-lg active:bg-white/10"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

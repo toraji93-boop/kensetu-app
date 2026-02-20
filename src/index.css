@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #1B365D;
-  --color-blue: #2E75B6;
-  --color-navy-light: #264a7a;
-  --color-blue-light: #4a8fc9;
+  --color-navy: #0F1B33;
+  --color-navy-light: #1E3460;
+  --color-blue: #3B82F6;
+  --color-blue-light: #60A5FA;
+  --color-accent: #FF6B35;
+  --color-accent-hover: #FF5517;
+  --color-success: #10B981;
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
@@ -17,14 +20,6 @@
   --color-gray-900: #111827;
 }
 
-@font-face {
-  font-family: 'Noto Sans JP';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -32,7 +27,7 @@
 }
 
 body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
   background-color: #f9fafb;
   color: #111827;
   min-height: 100vh;
@@ -41,5 +36,5 @@ body {
 }
 
 input, textarea, select, button {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
 }

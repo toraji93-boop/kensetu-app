@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ミツクル｜スマホで見積書・請求書をかんたん作成</title>
+<meta name="description" content="インストール不要。会社名を入れるだけで今すぐ使える見積書・請求書作成サービス。月5件まで完全無料。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1B33;
+  --navy-mid: #162544;
+  --navy-light: #1E3460;
+  --accent: #FF6B35;
+  --accent-hover: #FF5517;
+  --accent-soft: #FFF0E9;
+  --accent-glow: rgba(255, 107, 53, 0.2);
+  --blue: #3B82F6;
+  --blue-soft: #EFF6FF;
+  --green: #10B981;
+  --green-soft: #ECFDF5;
+  --purple: #8B5CF6;
+  --purple-soft: #F5F3FF;
+  --pink: #EC4899;
+  --bg-white: #FFFFFF;
+  --bg-warm: #FDFCFA;
+  --text-primary: #1A1A1A;
+  --text-secondary: #5A6270;
+  --text-light: #94A3B8;
+  --border: #E8ECF0;
+  --radius: 16px;
+  --radius-lg: 24px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  line-height: 1.8;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.container {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(15, 27, 51, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-inner {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.logo span { color: var(--accent); }
+
+.header-cta {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: var(--accent);
+  padding: 10px 24px;
+  border-radius: 100px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(255,107,53,0.3);
+}
+
+.header-cta:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255,107,53,0.4);
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 130px 0 80px;
+  background: linear-gradient(150deg, #0B1426 0%, #0F1B33 30%, #1A2D52 60%, #1E3460 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated gradient orbs */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, rgba(255,107,53,0.05) 40%, transparent 70%);
+  animation: floatOrb 8s ease-in-out infinite;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -15%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 60%);
+  animation: floatOrb 10s ease-in-out infinite reverse;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.05); }
+}
+
+/* Grid pattern overlay */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
+}
+
+.hero .container { position: relative; z-index: 2; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 28px;
+  backdrop-filter: blur(8px);
+  animation: fadeInUp 0.6s ease;
+}
+
+.hero-badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(16,185,129,0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.hero h1 {
+  font-size: clamp(30px, 8vw, 48px);
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  color: white;
+  margin-bottom: 20px;
+  animation: fadeInUp 0.6s ease 0.1s both;
+}
+
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent) 0%, #FF9A6C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.6s ease 0.2s both;
+}
+
+.cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, #FF8A5C 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 18px 40px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(255,107,53,0.4), 0 0 0 0 rgba(255,107,53,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cta-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(255,107,53,0.5), 0 0 0 4px rgba(255,107,53,0.15);
+}
+
+.cta-primary:hover::before { opacity: 1; }
+
+.cta-primary .arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.cta-primary:hover .arrow { transform: translateX(5px); }
+
+.hero-note {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  animation: fadeInUp 0.6s ease 0.4s both;
+}
+
+.hero-note span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-note .icon {
+  color: var(--green);
+  font-size: 14px;
+}
+
+/* Phone mockup */
+.hero-visual {
+  margin-top: 56px;
+  display: flex;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease 0.5s both;
+  perspective: 800px;
+}
+
+.phone-wrapper {
+  position: relative;
+}
+
+.phone-glow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 60%);
+  border-radius: 50%;
+  filter: blur(30px);
+  animation: floatOrb 6s ease-in-out infinite;
+}
+
+.phone-mockup {
+  width: 280px;
+  background: linear-gradient(160deg, #1a1a2e 0%, #0a0a1a 100%);
+  border-radius: 36px;
+  padding: 10px;
+  box-shadow: 
+    0 24px 60px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(255,255,255,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+  transform: rotateY(-5deg) rotateX(2deg);
+  transition: transform 0.5s ease;
+}
+
+.phone-mockup:hover {
+  transform: rotateY(0deg) rotateX(0deg);
+}
+
+.phone-screen {
+  background: var(--bg-white);
+  border-radius: 28px;
+  overflow: hidden;
+  aspect-ratio: 9/16.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-status {
+  background: var(--navy);
+  padding: 10px 16px 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.phone-notch {
+  width: 100px;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+}
+
+.phone-app-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.phone-app-header small {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.6;
+  display: block;
+  margin-top: 2px;
+}
+
+.phone-app-body {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #F8FAFB;
+}
+
+.phone-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: white;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.phone-menu-item:nth-child(1) .icon { background: linear-gradient(135deg, #3B82F6, #60A5FA); }
+.phone-menu-item:nth-child(2) .icon { background: linear-gradient(135deg, var(--accent), #FF9A6C); }
+.phone-menu-item:nth-child(3) .icon { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+
+.phone-menu-item .icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: white; flex-shrink: 0;
+}
+
+.phone-menu-item small {
+  font-weight: 400; font-size: 11px;
+  color: var(--text-light); display: block; margin-top: 2px;
+}
+
+/* ===== SCROLL ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== SECTIONS SHARED ===== */
+.section { padding: 80px 0; }
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label .line {
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.section-title {
+  font-size: clamp(24px, 6vw, 34px);
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+
+.section-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+}
+
+/* ===== STEPS ===== */
+.steps {
+  background: linear-gradient(180deg, var(--bg-warm) 0%, white 100%);
+}
+
+.steps .section-label { color: var(--blue); }
+.steps .section-label .line { background: var(--blue); }
+
+.steps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* Vertical line connector */
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 48px;
+  bottom: 48px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--blue), var(--accent), var(--green));
+  border-radius: 2px;
+}
+
+.step-card {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 24px 0;
+  position: relative;
+}
+
+.step-number {
+  width: 56px; height: 56px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  position: relative;
+  z-index: 2;
+}
+
+.step-card:nth-child(1) .step-number { background: linear-gradient(135deg, #3B82F6, #60A5FA); }
+.step-card:nth-child(2) .step-number { background: linear-gradient(135deg, var(--accent), #FF9A6C); }
+.step-card:nth-child(3) .step-number { background: linear-gradient(135deg, var(--green), #34D399); }
+
+.step-content h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.step-content p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ===== FEATURES ===== */
+.features .section-label { color: var(--accent); }
+.features .section-label .line { background: var(--accent); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.feature-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.feature-card:nth-child(1)::before { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.feature-card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent), #FF9A6C); }
+.feature-card:nth-child(3)::before { background: linear-gradient(90deg, var(--green), #34D399); }
+.feature-card:nth-child(4)::before { background: linear-gradient(90deg, var(--purple), #A78BFA); }
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  border-color: transparent;
+}
+
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.feature-card:nth-child(1) .feature-icon { background: var(--blue-soft); }
+.feature-card:nth-child(2) .feature-icon { background: var(--accent-soft); }
+.feature-card:nth-child(3) .feature-icon { background: var(--green-soft); }
+.feature-card:nth-child(4) .feature-icon { background: var(--purple-soft); }
+
+.feature-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* ===== VOICES ===== */
+.voices {
+  background: linear-gradient(135deg, #F8FAFF 0%, #FFF8F5 100%);
+}
+
+.voices .section-label { color: var(--purple); }
+.voices .section-label .line { background: var(--purple); }
+
+.voices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.voice-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.voice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.voice-quote {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.voice-card:nth-child(1) .voice-quote { color: var(--blue); }
+.voice-card:nth-child(2) .voice-quote { color: var(--accent); }
+.voice-card:nth-child(3) .voice-quote { color: var(--purple); }
+
+.voice-card p {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.voice-attr {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voice-attr::before {
+  content: '';
+  width: 20px; height: 2px;
+  border-radius: 1px;
+  background: var(--border);
+}
+
+/* ===== PRICING ===== */
+.pricing .section-label { color: var(--green); }
+.pricing .section-label .line { background: var(--green); }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.price-card {
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.price-card.free {
+  background: white;
+  border: 2px solid var(--border);
+}
+
+.price-card.pro {
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white;
+  border: 2px solid transparent;
+  box-shadow: 0 16px 48px rgba(15,27,51,0.25);
+}
+
+.price-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent), #FF9A6C);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 20px;
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+}
+
+.price-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.price-card.free h3 { color: var(--text-secondary); }
+.price-card.pro h3 { color: rgba(255,255,255,0.7); }
+
+.price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.price-amount .yen { font-size: 20px; font-weight: 700; }
+.price-amount .number {
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.price-card.free .price-amount .number { color: var(--navy); }
+
+.price-amount .period {
+  font-size: 14px;
+}
+
+.price-card.pro .price-amount .period { color: rgba(255,255,255,0.5); }
+
+.price-desc {
+  font-size: 13px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid;
+}
+
+.price-card.free .price-desc { color: var(--text-light); border-color: var(--border); }
+.price-card.pro .price-desc { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.1); }
+
+.price-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.price-features li {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.price-features .check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.price-card.free .check { background: var(--green-soft); color: var(--green); }
+.price-card.pro .check { background: rgba(16,185,129,0.2); color: #34D399; }
+
+.price-cta {
+  display: block;
+  text-align: center;
+  margin-top: 28px;
+  padding: 16px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.price-cta.outline {
+  border: 2px solid var(--border);
+  color: var(--navy);
+}
+
+.price-cta.outline:hover {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+
+.price-cta.glow {
+  background: linear-gradient(135deg, var(--accent), #FF9A6C);
+  color: white;
+  box-shadow: 0 4px 20px rgba(255,107,53,0.4);
+}
+
+.price-cta.glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255,107,53,0.5);
+}
+
+/* ===== FAQ ===== */
+.faq {
+  background: var(--bg-warm);
+}
+
+.faq .section-label { color: var(--accent); }
+.faq .section-label .line { background: var(--accent); }
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faq-item.active {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(255,107,53,0.08);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.faq-item.active .faq-question { color: var(--accent); }
+
+.faq-question .plus {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  background: #F1F5F9;
+  color: var(--text-light);
+}
+
+.faq-item.active .faq-question .plus {
+  background: var(--accent);
+  color: white;
+  transform: rotate(45deg);
+  border-radius: 50%;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-answer-inner {
+  padding: 0 24px 22px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* ===== FINAL CTA ===== */
+.final-cta {
+  background: linear-gradient(150deg, #0B1426 0%, var(--navy) 40%, var(--navy-light) 100%);
+  color: white;
+  text-align: center;
+  padding: 88px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.final-cta::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.final-cta .container { position: relative; z-index: 2; }
+
+.final-cta h2 {
+  font-size: clamp(24px, 6vw, 34px);
+  font-weight: 900;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  letter-spacing: -0.03em;
+}
+
+.final-cta p {
+  color: rgba(255,255,255,0.5);
+  font-size: 15px;
+  margin-bottom: 36px;
+}
+
+.cta-final {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent), #FF9A6C);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 18px 44px;
+  border-radius: 100px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(255,107,53,0.4);
+}
+
+.cta-final:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 36px rgba(255,107,53,0.5);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.35);
+  padding: 36px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.footer-brand {
+  font-size: 20px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.7);
+}
+
+.footer-brand span { color: var(--accent); }
+
+.footer-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+  margin-top: -8px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.35);
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+.footer-copy { font-size: 12px; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 768px) {
+  .container { max-width: 960px; }
+  .hero { padding: 160px 0 100px; }
+  
+  .hero-layout {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+  
+  .hero-text { flex: 1; }
+  .hero-visual { margin-top: 0; flex-shrink: 0; }
+  .hero-note { flex-direction: row; }
+  
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  .voices-grid { flex-direction: row; }
+  .voice-card { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">ミツ<span>クル</span></div>
+    <a href="/app" class="header-cta">無料で始める</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-layout">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          月5件まで、ずっと無料
+        </div>
+        <h1>見積書、<br><em>LINEで送る</em>だけ。</h1>
+        <p class="hero-sub">
+          スマホで作って、そのままお客様へ。<br>
+          インストール不要。30秒で始められます。
+        </p>
+        <div class="cta-group">
+          <a href="/app" class="cta-primary">
+            無料で使ってみる
+            <span class="arrow">→</span>
+          </a>
+          <div class="hero-note">
+            <span><span class="icon">✓</span> クレジットカード不要</span>
+            <span><span class="icon">✓</span> メールアドレス不要</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="phone-wrapper">
+          <div class="phone-glow"></div>
+          <div class="phone-mockup">
+            <div class="phone-screen">
+              <div class="phone-status">
+                <div class="phone-notch"></div>
+              </div>
+              <div class="phone-app-header">
+                ミツクル
+                <small>見積書・請求書 かんたん作成</small>
+              </div>
+              <div class="phone-app-body">
+                <div class="phone-menu-item">
+                  <div class="icon">📝</div>
+                  <div>見積書を作る<small>新しい見積書を作成します</small></div>
+                </div>
+                <div class="phone-menu-item">
+                  <div class="icon">📨</div>
+                  <div>請求書を作る<small>新しい請求書を作成します</small></div>
+                </div>
+                <div class="phone-menu-item">
+                  <div class="icon">📋</div>
+                  <div>履歴<small>過去の書類を確認</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="section steps">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span class="line"></span> HOW IT WORKS</p>
+      <h2 class="section-title">かんたん3ステップ</h2>
+      <p class="section-desc">むずかしい操作は一切ありません。</p>
+    </div>
+    
+    <div class="steps-grid reveal">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>会社名を入れて登録</h3>
+          <p>メールアドレスもパスワードも不要。<br>会社名を入力するだけで、30秒で登録完了です。</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>金額を入力してPDF作成</h3>
+          <p>宛先と項目・金額を入力するだけ。<br>消費税と合計金額は自動で計算されます。</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>LINEでお客様に送信</h3>
+          <p>PDF保存したら、そのままLINEで送るだけ。<br>お客様にすぐ届きます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span class="line"></span> FEATURES</p>
+      <h2 class="section-title">シンプルだから、つづく。</h2>
+      <p class="section-desc">余計な機能はありません。必要なことだけ、かんたんに。</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">📱</div>
+        <h3>インストール不要</h3>
+        <p>アプリのダウンロードは必要ありません。URLを開くだけで、すぐに使い始められます。</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">⚡</div>
+        <h3>登録はたった30秒</h3>
+        <p>必要なのは会社名だけ。メールアドレスもパスワードもいりません。6桁の番号でログインします。</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🧮</div>
+        <h3>消費税も自動計算</h3>
+        <p>項目と金額を入れるだけで、消費税と合計金額が自動で出ます。計算ミスの心配はありません。</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🏢</div>
+        <h3>ロゴ・角印も入る</h3>
+        <p>会社のロゴやハンコの画像を登録すれば、きちんとしたプロの見積書が出来上がります。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICES -->
+<section class="section voices">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span class="line"></span> VOICES</p>
+      <h2 class="section-title">ご利用中の方の声</h2>
+    </div>
+    
+    <div class="voices-grid reveal">
+      <div class="voice-card">
+        <div class="voice-quote">"</div>
+        <p>現場で「見積書ちょうだい」と言われて、その場でスマホから送れるようになった。</p>
+        <span class="voice-attr">建設業・一人親方</span>
+      </div>
+      <div class="voice-card">
+        <div class="voice-quote">"</div>
+        <p>パソコン持ってないけど、これならスマホだけで全部できる。助かってます。</p>
+        <span class="voice-attr">内装業・個人事業主</span>
+      </div>
+      <div class="voice-card">
+        <div class="voice-quote">"</div>
+        <p>知り合いにURL送っただけで使い始めてた。説明がいらないのがいい。</p>
+        <span class="voice-attr">リフォーム業</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span class="line"></span> PRICING</p>
+      <h2 class="section-title">ずっと無料でも使えます</h2>
+      <p class="section-desc">たくさん使う方だけ、プロプランをどうぞ。</p>
+    </div>
+    
+    <div class="pricing-grid reveal">
+      <div class="price-card free">
+        <h3>無料プラン</h3>
+        <div class="price-amount">
+          <span class="yen">¥</span>
+          <span class="number">0</span>
+        </div>
+        <p class="price-desc">月5件まで、ずっと無料</p>
+        <ul class="price-features">
+          <li><span class="check">✓</span>見積書・請求書の作成</li>
+          <li><span class="check">✓</span>PDF保存</li>
+          <li><span class="check">✓</span>ロゴ・角印</li>
+          <li><span class="check">✓</span>インボイス対応</li>
+          <li><span class="check">✓</span>履歴の閲覧</li>
+        </ul>
+        <a href="/app" class="price-cta outline">無料で始める</a>
+      </div>
+      
+      <div class="price-card pro">
+        <div class="price-badge">おすすめ</div>
+        <h3>プロプラン</h3>
+        <div class="price-amount">
+          <span class="yen">¥</span>
+          <span class="number">480</span>
+          <span class="period">/月（税込）</span>
+        </div>
+        <p class="price-desc">作成数の制限なし</p>
+        <ul class="price-features">
+          <li><span class="check">✓</span>無料プランの全機能</li>
+          <li><span class="check">✓</span>見積書・請求書が無制限</li>
+          <li><span class="check">✓</span>いつでも解約OK</li>
+        </ul>
+        <a href="/app" class="price-cta glow">プロプランで始める</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span class="line"></span> FAQ</p>
+      <h2 class="section-title">よくある質問</h2>
+    </div>
+    
+    <div class="faq-list reveal">
+      <div class="faq-item active">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          本当に無料で使えますか？
+          <span class="plus">+</span>
+        </button>
+        <div class="faq-answer" style="max-height:200px">
+          <div class="faq-answer-inner">
+            はい。月5件まで完全無料です。クレジットカードの登録も必要ありません。無料プランでもロゴ・角印・インボイス対応など、全ての機能が使えます。
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          スマホしか持っていませんが大丈夫ですか？
+          <span class="plus">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            はい。スマホのブラウザだけで全て完結します。PCもプリンターも不要です。
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          データは消えませんか？
+          <span class="plus">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            サーバーに安全に保存されます。スマホを変えても、6桁のアクセスコードでログインすればデータはそのまま使えます。
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          どの業種でも使えますか？
+          <span class="plus">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            はい。建設業、内装業、リフォーム、清掃、フリーランスなど、見積書・請求書を出すお仕事ならどなたでもお使いいただけます。
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          解約したい場合は？
+          <span class="plus">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            プロプランはいつでも解約できます。解約後は無料プランに戻り、月5件までそのまま使い続けられます。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="container reveal">
+    <h2>見積書を作るのに、<br>もうパソコンはいりません。</h2>
+    <p>会社名を入れるだけで、今すぐ始められます。</p>
+    <a href="/app" class="cta-final">
+      無料で使ってみる
+      <span>→</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">ミツ<span>クル</span></div>
+      <p class="footer-tagline">スマホで見積書・請求書をかんたん作成</p>
+      <nav class="footer-links">
+        <a href="/terms">利用規約</a>
+        <a href="/legal">特定商取引法</a>
+        <a href="/privacy">プライバシーポリシー</a>
+      </nav>
+      <p class="footer-copy">© 2025 ミツクル</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Header scroll effect
+window.addEventListener('scroll', () => {
+  document.querySelector('.header').style.boxShadow = 
+    window.scrollY > 10 ? '0 4px 20px rgba(0,0,0,0.15)' : 'none';
+});
+
+// FAQ accordion
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const answer = item.querySelector('.faq-answer');
+  const isActive = item.classList.contains('active');
+  
+  document.querySelectorAll('.faq-item').forEach(el => {
+    el.classList.remove('active');
+    el.querySelector('.faq-answer').style.maxHeight = '0';
+  });
+  
+  if (!isActive) {
+    item.classList.add('active');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

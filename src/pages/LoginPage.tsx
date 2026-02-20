@@ -68,12 +68,10 @@ export default function LoginPage({ onLogin }: Props) {
         <div className="w-full max-w-sm">
           <div className="text-center mb-10">
             <div className="w-20 h-20 bg-navy rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <span className="text-3xl font-black text-white">ミツ<span className="text-accent">クル</span></span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">建設見積・請求書</h1>
-            <p className="text-gray-500 mt-2">かんたん作成アプリ</p>
+            <h1 className="text-2xl font-bold text-gray-900">ミツクル</h1>
+            <p className="text-gray-500 mt-2">見積書・請求書 かんたん作成</p>
           </div>
 
           <button
