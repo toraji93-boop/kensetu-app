@@ -12,8 +12,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/lp/index.html" },
-    { "source": "/app/((?!assets/).*)", "destination": "/index.html" },
-    { "source": "/app", "destination": "/index.html" }
+    { "source": "/app/:path*", "destination": "/app.html" },
+    { "source": "/app", "destination": "/app.html" }
   ]
 }

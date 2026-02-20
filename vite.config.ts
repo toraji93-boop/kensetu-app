@@ -5,10 +5,11 @@ import fs from 'fs'
 import path from 'path'
 import type { Plugin } from 'vite'
 
-// / へのアクセスを public/lp/index.html で返すプラグイン
-function lpRedirectPlugin(): Plugin {
+// 開発時: / へのアクセスを public/lp/index.html で返すプラグイン
+// ビルド後: dist/index.html を app.html にリネームし、LP を index.html に配置
+function lpPlugin(): Plugin {
   return {
-    name: 'lp-redirect',
+    name: 'lp-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (req.url === '/' || req.url === '/index.html') {
@@ -21,9 +22,25 @@ function lpRedirectPlugin(): Plugin {
         next()
       })
     },
+    closeBundle() {
+      const distDir = path.resolve(__dirname, 'dist')
+      const reactHtml = path.join(distDir, 'index.html')
+      const appHtml = path.join(distDir, 'app.html')
+      const lpHtml = path.join(distDir, 'lp', 'index.html')
+
+      // Reactアプリの index.html → app.html にリネーム
+      if (fs.existsSync(reactHtml)) {
+        fs.renameSync(reactHtml, appHtml)
+      }
+
+      // LP の index.html をルートにコピー
+      if (fs.existsSync(lpHtml)) {
+        fs.copyFileSync(lpHtml, reactHtml)
+      }
+    },
   }
 }
 
 export default defineConfig({
-  plugins: [lpRedirectPlugin(), react(), tailwindcss()],
+  plugins: [lpPlugin(), react(), tailwindcss()],
 })
