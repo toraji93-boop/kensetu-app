@@ -115,6 +115,20 @@ export default function HomePage({ company }: Props) {
             </div>
           </button>
 
+          {/* 使い方ガイド */}
+          <button
+            onClick={() => window.open('/guide.pdf', '_blank')}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
+          >
+            <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center shrink-0 text-2xl">
+              📖
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">使い方ガイド</h2>
+              <p className="text-sm text-gray-500">操作説明書を見る</p>
+            </div>
+          </button>
+
           {/* 紹介する */}
           <button
             onClick={handleShare}
