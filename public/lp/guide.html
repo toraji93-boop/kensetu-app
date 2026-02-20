@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使い方ガイド｜ミツクル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1B33;
+  --accent: #FF6B35;
+  --blue: #3B82F6;
+  --green: #10B981;
+  --red: #DC2626;
+  --gray: #5A6270;
+  --light: #F0F4F8;
+  --border: #E2E6EA;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  color: #1A1A1A;
+  background: #FAFAF8;
+  line-height: 1.8;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* HEADER */
+.g-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.g-header-title {
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+}
+.g-header-back {
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.g-header-back:hover { color: white; }
+
+/* HERO */
+.g-hero {
+  background: linear-gradient(160deg, #0B1426 0%, var(--navy) 40%, #1E3460 100%);
+  color: white;
+  text-align: center;
+  padding: 48px 24px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.g-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,107,53,0.12) 0%, transparent 70%);
+}
+.g-hero h1 {
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  position: relative;
+}
+.g-hero p {
+  color: rgba(255,255,255,0.6);
+  font-size: 15px;
+  position: relative;
+}
+
+/* TOC */
+.g-toc {
+  background: white;
+  margin: 20px 16px;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+}
+.g-toc h2 {
+  font-size: 14px;
+  color: var(--gray);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.g-toc a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  color: var(--navy);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+.g-toc a:last-child { border-bottom: none; }
+.g-toc a:hover { color: var(--accent); }
+.g-toc .num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+/* SECTION */
+.g-section {
+  margin: 24px 16px;
+  background: white;
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+}
+.g-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.g-section-bar {
+  width: 5px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.g-section-title h2 {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+/* STEP */
+.g-step {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.g-step:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.g-step-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.g-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: white;
+  font-weight: 900;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.g-step-num.blue { background: var(--blue); }
+.g-step-num.orange { background: var(--accent); }
+.g-step-num.green { background: var(--green); }
+.g-step-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.g-step-body {
+  font-size: 15px;
+  color: var(--gray);
+  margin-bottom: 16px;
+}
+.g-step-body .accent { color: var(--accent); font-weight: 700; }
+.g-step-body .green { color: var(--green); font-weight: 700; }
+.g-step-body .red { color: var(--red); font-weight: 700; font-size: 16px; }
+
+/* PHONE IMAGE */
+.g-phone {
+  max-width: 240px;
+  margin: 0 auto;
+  border: 3px solid var(--navy);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.g-phone img {
+  width: 100%;
+  display: block;
+}
+
+/* ITEM LIST */
+.g-items {
+  margin: 12px 0;
+}
+.g-item {
+  padding: 10px 12px;
+  border-left: 3px solid var(--border);
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+.g-item strong {
+  color: var(--navy);
+  display: block;
+}
+.g-item span {
+  color: var(--gray);
+  font-size: 14px;
+}
+
+/* BULLET LIST */
+.g-bullets {
+  margin: 8px 0;
+}
+.g-bullets li {
+  list-style: none;
+  padding: 4px 0;
+  font-size: 15px;
+  color: var(--gray);
+}
+.g-bullets li::before {
+  content: '・';
+  color: var(--navy);
+  font-weight: 700;
+}
+
+/* TIP */
+.g-tip {
+  background: var(--light);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.g-tip-title {
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.g-tip-body {
+  font-size: 14px;
+  color: var(--navy);
+}
+
+/* FAQ */
+.g-faq {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.g-faq:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.g-faq-q {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.g-faq-a {
+  font-size: 15px;
+  color: var(--gray);
+  padding-left: 8px;
+}
+
+/* FOOTER */
+.g-footer {
+  background: var(--navy);
+  color: white;
+  text-align: center;
+  padding: 32px 24px;
+  margin-top: 24px;
+}
+.g-footer-brand {
+  font-size: 20px;
+  font-weight: 900;
+}
+.g-footer-brand span { color: var(--accent); }
+.g-footer-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+.g-footer-cta {
+  display: inline-block;
+  margin-top: 20px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 100px;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="g-header">
+  <a href="/app" class="g-header-back">← アプリに戻る</a>
+  <span class="g-header-title">使い方ガイド</span>
+</header>
+
+<!-- HERO -->
+<div class="g-hero">
+  <h1>ミツクル<br>使い方ガイド</h1>
+  <p>スマホだけで見積書・請求書を作成する方法</p>
+</div>
+
+<!-- TOC -->
+<nav class="g-toc">
+  <h2>もくじ</h2>
+  <a href="#start"><span class="num">1</span>はじめかた（初回登録）</a>
+  <a href="#home"><span class="num">2</span>ホーム画面の使いかた</a>
+  <a href="#settings"><span class="num">3</span>会社情報を設定する</a>
+  <a href="#create"><span class="num">4</span>見積書を作る</a>
+  <a href="#send"><span class="num">5</span>PDFをLINEで送る</a>
+  <a href="#history"><span class="num">6</span>履歴を確認する</a>
+  <a href="#faq"><span class="num">7</span>よくある質問</a>
+</nav>
+
+<!-- 1. はじめかた -->
+<section class="g-section" id="start">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>はじめかた（初回登録）</h2>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num blue">1</div>
+      <div class="g-step-title">URLを開く</div>
+    </div>
+    <div class="g-step-body">
+      スマホのブラウザで下記URLを開きます。<br><br>
+      <span class="accent">https://mitsukuru-jp.vercel.app</span><br><br>
+      「初めての方（新規登録）」をタップしてください。
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/login.jpg" alt="ログイン画面"></div>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num orange">2</div>
+      <div class="g-step-title">会社名を入力して登録</div>
+    </div>
+    <div class="g-step-body">
+      会社名または屋号を入力して「登録する」をタップ。<br><br>
+      <span class="green">✓ メールアドレス不要</span><br>
+      <span class="green">✓ パスワード不要</span>
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/register.jpg" alt="新規登録画面"></div>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num green">3</div>
+      <div class="g-step-title">アクセスコードをメモ</div>
+    </div>
+    <div class="g-step-body">
+      6桁のアクセスコードが表示されます。<br><br>
+      <span class="red">※ 必ずメモしてください！</span><br>
+      次回ログインに必要です。<br><br>
+      メモしたら「はじめる」をタップ。
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/code.jpg" alt="アクセスコード画面"></div>
+  </div>
+</section>
+
+<!-- 2. ホーム画面 -->
+<section class="g-section" id="home">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>ホーム画面の使いかた</h2>
+  </div>
+
+  <div class="g-step-body">
+    ログインするとホーム画面が表示されます。
+  </div>
+
+  <div class="g-phone" style="margin: 16px auto;"><img src="/uploads/guide/home.jpg" alt="ホーム画面"></div>
+
+  <div class="g-items">
+    <div class="g-item"><strong>見積書を作る</strong><span>新しい見積書を作成します</span></div>
+    <div class="g-item"><strong>請求書を作る</strong><span>新しい請求書を作成します</span></div>
+    <div class="g-item"><strong>履歴</strong><span>作成した書類の一覧を確認</span></div>
+    <div class="g-item"><strong>紹介する</strong><span>LINEで知り合いに紹介できます</span></div>
+    <div class="g-item"><strong>右上の ⚙ 歯車</strong><span>会社情報の設定画面を開きます</span></div>
+  </div>
+</section>
+
+<!-- 3. 会社情報設定 -->
+<section class="g-section" id="settings">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>会社情報を設定する</h2>
+  </div>
+
+  <div class="g-step-body">
+    ホーム右上の ⚙ 歯車アイコンから設定できます。<br>
+    入力内容はPDFの見積書・請求書に反映されます。
+  </div>
+
+  <div class="g-phone" style="margin: 16px auto;"><img src="/uploads/guide/settings1.jpg" alt="会社情報設定"></div>
+
+  <div class="g-items">
+    <div class="g-item"><strong>会社名（屋号）</strong></div>
+    <div class="g-item"><strong>郵便番号・住所</strong></div>
+    <div class="g-item"><strong>電話番号・FAX番号</strong></div>
+    <div class="g-item"><strong>振込先銀行情報</strong></div>
+    <div class="g-item"><strong>インボイス登録番号</strong></div>
+    <div class="g-item"><strong>ロゴ画像</strong></div>
+    <div class="g-item"><strong>角印（ハンコ）画像</strong></div>
+  </div>
+
+  <div class="g-tip">
+    <div class="g-tip-title">💡 ロゴ・角印について</div>
+    <div class="g-tip-body">「タップして画像を選択」からスマホに保存した画像を登録できます。登録すると見積書・請求書のPDFに自動で挿入されます。</div>
+  </div>
+</section>
+
+<!-- 4. 見積書を作る -->
+<section class="g-section" id="create">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>見積書を作る</h2>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num blue">1</div>
+      <div class="g-step-title">基本情報を入力</div>
+    </div>
+    <ul class="g-bullets">
+      <li>書類番号（自動入力。変更可）</li>
+      <li>宛先（会社名）★必須</li>
+      <li>発行日・有効期限</li>
+      <li>工事名・工事場所（任意）</li>
+    </ul>
+    <div class="g-phone" style="margin-top:16px;"><img src="/uploads/guide/edit1.jpg" alt="基本情報入力"></div>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num orange">2</div>
+      <div class="g-step-title">明細を入力</div>
+    </div>
+    <ul class="g-bullets">
+      <li>項目名を入力</li>
+      <li>数量・単位・単価を入力</li>
+      <li>金額は自動計算されます</li>
+      <li>「＋行を追加」で項目追加</li>
+      <li>消費税・合計も自動計算</li>
+    </ul>
+    <div class="g-phone" style="margin-top:16px;"><img src="/uploads/guide/edit2.jpg" alt="明細入力"></div>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num green">3</div>
+      <div class="g-step-title">プレビューで確認 → 保存</div>
+    </div>
+    <div class="g-step-body">
+      「プレビュー」ボタンで見た目を確認できます。<br><br>
+      「保存」で保存されます。<br><br>
+      右上「PDF保存」をタップするとPDFファイルがダウンロードされます。
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/preview1.jpg" alt="プレビュー画面"></div>
+  </div>
+</section>
+
+<!-- 5. LINE送信 -->
+<section class="g-section" id="send">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>PDFをLINEで送る</h2>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num blue">1</div>
+      <div class="g-step-title">PDF保存する</div>
+    </div>
+    <div class="g-step-body">
+      プレビュー画面の右上「PDF保存」をタップ。<br>
+      PDFがダウンロードされます。
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/preview2.jpg" alt="PDF保存"></div>
+  </div>
+
+  <div class="g-step">
+    <div class="g-step-head">
+      <div class="g-step-num orange">2</div>
+      <div class="g-step-title">LINEでお客様に送る</div>
+    </div>
+    <div class="g-step-body">
+      ダウンロードしたPDFの共有ボタンから「LINE」を選んでお客様に送信できます。<br><br>
+      メールでの送信もできます。
+    </div>
+    <div class="g-phone"><img src="/uploads/guide/share.jpg" alt="LINE共有"></div>
+  </div>
+</section>
+
+<!-- 6. 履歴 -->
+<section class="g-section" id="history">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>履歴を確認する</h2>
+  </div>
+
+  <div class="g-step-body">
+    ホーム画面の「履歴」をタップすると、過去に作成した見積書・請求書が一覧で表示されます。
+  </div>
+
+  <div class="g-phone" style="margin: 16px auto;"><img src="/uploads/guide/history.jpg" alt="履歴画面"></div>
+
+  <div class="g-items">
+    <div class="g-item"><strong>「すべて」「見積書」「請求書」で絞り込み</strong></div>
+    <div class="g-item"><strong>「請求書に転用」</strong><span>見積書の内容をコピーして請求書を作成</span></div>
+    <div class="g-item"><strong>「削除」</strong><span>不要な書類を削除</span></div>
+  </div>
+
+  <div class="g-tip">
+    <div class="g-tip-title">💡 ヒント</div>
+    <div class="g-tip-body">見積書を作成した後、「請求書に転用」を使えば内容をコピーした請求書がかんたんに作れます。同じ内容を二度入力する手間が省けます。</div>
+  </div>
+</section>
+
+<!-- 7. FAQ -->
+<section class="g-section" id="faq">
+  <div class="g-section-title">
+    <div class="g-section-bar"></div>
+    <h2>よくある質問</h2>
+  </div>
+
+  <div class="g-faq">
+    <div class="g-faq-q">Q. アクセスコードを忘れました</div>
+    <div class="g-faq-a">A. 再発行はできません。新規登録してください。コードは必ずメモしておきましょう。</div>
+  </div>
+  <div class="g-faq">
+    <div class="g-faq-q">Q. スマホを変えてもデータは使えますか？</div>
+    <div class="g-faq-a">A. はい。新しいスマホで同じURLを開き、アクセスコードでログインすればOKです。</div>
+  </div>
+  <div class="g-faq">
+    <div class="g-faq-q">Q. 見積書を請求書にできますか？</div>
+    <div class="g-faq-a">A. はい。履歴画面の「請求書に転用」をタップすると、内容をコピーした請求書が作成されます。</div>
+  </div>
+  <div class="g-faq">
+    <div class="g-faq-q">Q. 建設業以外でも使えますか？</div>
+    <div class="g-faq-a">A. はい。どの業種でもお使いいただけます。「工事名」「工事場所」は空欄でOKです。</div>
+  </div>
+  <div class="g-faq">
+    <div class="g-faq-q">Q. 月に何件まで作れますか？</div>
+    <div class="g-faq-a">A. 無料プランは月5件まで。プロプラン（月額480円・税込）で無制限にご利用いただけます。</div>
+  </div>
+  <div class="g-faq">
+    <div class="g-faq-q">Q. 知り合いに紹介したい</div>
+    <div class="g-faq-a">A. ホームの「紹介する」ボタンからLINEでURLを共有できます。相手はURLを開くだけで始められます。</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="g-footer">
+  <div class="g-footer-brand">ミツ<span>クル</span></div>
+  <div class="g-footer-sub">見積書・請求書 かんたん作成</div>
+  <a href="/app" class="g-footer-cta">アプリに戻る</a>
+</footer>
+
+</body>
+</html>
