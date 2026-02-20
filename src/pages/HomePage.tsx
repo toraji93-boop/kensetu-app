@@ -12,7 +12,7 @@ export default function HomePage({ company }: Props) {
 
   // 紹介する機能
   const handleShare = async () => {
-    const shareText = `見積書がスマホだけで作れるアプリ、めっちゃ便利だよ。\nインストール不要で、このリンク開くだけ👇\nhttps://mitsukuru.vercel.app`
+    const shareText = `見積書がスマホだけで作れるアプリ、めっちゃ便利だよ。\nインストール不要で、このリンク開くだけ👇\nhttps://mitsukuru-jp.vercel.app`
 
     if (navigator.share) {
       try {
