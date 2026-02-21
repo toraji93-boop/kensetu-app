@@ -2,12 +2,16 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!)
+}
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!
-)
+function getSupabase() {
+  return createClient(
+    process.env.VITE_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!
+  )
+}
 
 // Vercelでraw bodyを取得するための設定
 export const config = {
@@ -38,6 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const rawBody = await getRawBody(req)
 
+    const stripe = getStripe()
     if (webhookSecret && sig) {
       event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
     } else {
@@ -56,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const companyId = session.metadata?.company_id
 
     if (companyId) {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('companies')
         .update({ plan: 'pro', updated_at: new Date().toISOString() })
         .eq('id', companyId)
@@ -76,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const companyId = subscription.metadata?.company_id
 
     if (companyId) {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('companies')
         .update({ plan: 'free', updated_at: new Date().toISOString() })
         .eq('id', companyId)
