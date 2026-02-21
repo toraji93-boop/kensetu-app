@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Company } from '../lib/types'
+import { getMonthlyDocumentCount } from '../lib/supabase'
+import UpgradeModal from '../components/UpgradeModal'
+
+const FREE_MONTHLY_LIMIT = 5
 
 interface Props {
   company: Company
@@ -9,6 +13,26 @@ interface Props {
 export default function HomePage({ company }: Props) {
   const navigate = useNavigate()
   const [copied, setCopied] = useState(false)
+  const [monthlyCount, setMonthlyCount] = useState(0)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+
+  const isPro = company.plan === 'pro'
+  const remaining = FREE_MONTHLY_LIMIT - monthlyCount
+
+  useEffect(() => {
+    if (!isPro) {
+      getMonthlyDocumentCount(company.id).then(setMonthlyCount)
+    }
+  }, [company.id, isPro])
+
+  // 書類作成ボタンのクリックハンドラ
+  const handleCreateDocument = (type: 'estimate' | 'invoice') => {
+    if (!isPro && monthlyCount >= FREE_MONTHLY_LIMIT) {
+      setShowUpgradeModal(true)
+      return
+    }
+    navigate(`/app/document/new/${type}`)
+  }
 
   // 紹介する機能
   const handleShare = async () => {
@@ -64,12 +88,26 @@ export default function HomePage({ company }: Props) {
         </div>
       </header>
 
+      {/* 残り作成数 */}
+      <div className="max-w-lg mx-auto w-full px-4 pt-4">
+        <div className="bg-white rounded-xl px-4 py-3 shadow-sm border border-gray-200 flex items-center justify-between">
+          <span className="text-sm text-gray-600">今月の作成数</span>
+          {isPro ? (
+            <span className="text-sm font-bold text-success">無制限</span>
+          ) : (
+            <span className={`text-sm font-bold ${remaining <= 0 ? 'text-red-500' : remaining <= 2 ? 'text-amber-500' : 'text-gray-900'}`}>
+              {monthlyCount} / {FREE_MONTHLY_LIMIT}件
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* メインコンテンツ */}
-      <main className="max-w-lg mx-auto p-4 pt-6 flex-1 w-full">
+      <main className="max-w-lg mx-auto p-4 pt-4 flex-1 w-full">
         <div className="grid grid-cols-1 gap-4">
           {/* 見積書を作る */}
           <button
-            onClick={() => navigate('/app/document/new/estimate')}
+            onClick={() => handleCreateDocument('estimate')}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
           >
             <div className="w-14 h-14 bg-blue/10 rounded-xl flex items-center justify-center shrink-0">
@@ -85,7 +123,7 @@ export default function HomePage({ company }: Props) {
 
           {/* 請求書を作る */}
           <button
-            onClick={() => navigate('/app/document/new/invoice')}
+            onClick={() => handleCreateDocument('invoice')}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex items-center gap-4 active:bg-gray-50 transition-colors text-left"
           >
             <div className="w-14 h-14 bg-navy/10 rounded-xl flex items-center justify-center shrink-0">
@@ -153,6 +191,11 @@ export default function HomePage({ company }: Props) {
       <footer className="text-center py-4 text-xs text-gray-400">
         &copy; 2025 ミツクル
       </footer>
+
+      {/* アップグレードモーダル */}
+      {showUpgradeModal && (
+        <UpgradeModal onClose={() => setShowUpgradeModal(false)} />
+      )}
     </div>
   )
 }

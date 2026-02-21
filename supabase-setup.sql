@@ -13,9 +13,13 @@ CREATE TABLE IF NOT EXISTS companies (
   invoice_number TEXT,
   logo_url TEXT,
   seal_url TEXT,
+  plan TEXT DEFAULT 'free',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- 既存テーブルへのplanカラム追加（マイグレーション用）
+-- ALTER TABLE companies ADD COLUMN plan TEXT DEFAULT 'free';
 
 -- documents テーブル
 CREATE TABLE IF NOT EXISTS documents (

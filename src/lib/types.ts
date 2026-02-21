@@ -10,6 +10,7 @@ export interface Company {
   invoice_number: string | null
   logo_url: string | null
   seal_url: string | null
+  plan: string
   created_at: string
   updated_at: string
 }
