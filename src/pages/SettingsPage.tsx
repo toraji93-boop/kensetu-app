@@ -27,6 +27,30 @@ export default function SettingsPage({ company, onUpdate }: Props) {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
+  const [portalLoading, setPortalLoading] = useState(false)
+
+  const isPro = (company.plan ?? 'free') === 'pro'
+
+  const handleManagePlan = async () => {
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId: company.id }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setMessage(data.error || 'プラン管理ページの表示に失敗しました')
+        setPortalLoading(false)
+      }
+    } catch {
+      setMessage('通信エラーが発生しました')
+      setPortalLoading(false)
+    }
+  }
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -267,6 +291,26 @@ export default function SettingsPage({ company, onUpdate }: Props) {
         >
           {saving ? <Spinner className="border-white border-t-transparent" /> : '保存する'}
         </button>
+
+        {/* プラン管理 */}
+        {isPro && (
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <h2 className="text-sm font-bold text-gray-700 mb-3">プラン管理</h2>
+            <div className="bg-white rounded-xl p-4 border border-gray-200 flex items-center justify-between">
+              <div>
+                <p className="font-bold text-gray-900">プロプラン</p>
+                <p className="text-xs text-gray-500">月額¥480</p>
+              </div>
+              <button
+                onClick={handleManagePlan}
+                disabled={portalLoading}
+                className="text-sm text-navy font-bold px-4 py-2 border border-navy rounded-lg active:bg-navy/5 transition-colors disabled:opacity-50"
+              >
+                {portalLoading ? '読込中...' : '管理・解約'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ログアウト */}
         <button

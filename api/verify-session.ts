@@ -38,10 +38,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'company_idが見つかりません' })
     }
 
-    // companiesテーブルのplanをproに更新
+    // companiesテーブルのplanとstripe_customer_idを更新
+    const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id
     const { error } = await supabase
       .from('companies')
-      .update({ plan: 'pro', updated_at: new Date().toISOString() })
+      .update({
+        plan: 'pro',
+        stripe_customer_id: customerId || null,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', companyId)
 
     if (error) {

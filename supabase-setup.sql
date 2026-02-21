@@ -14,12 +14,14 @@ CREATE TABLE IF NOT EXISTS companies (
   logo_url TEXT,
   seal_url TEXT,
   plan TEXT DEFAULT 'free',
+  stripe_customer_id TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 既存テーブルへのplanカラム追加（マイグレーション用）
+-- 既存テーブルへのカラム追加（マイグレーション用）
 -- ALTER TABLE companies ADD COLUMN plan TEXT DEFAULT 'free';
+-- ALTER TABLE companies ADD COLUMN stripe_customer_id TEXT;
 
 -- documents テーブル
 CREATE TABLE IF NOT EXISTS documents (
