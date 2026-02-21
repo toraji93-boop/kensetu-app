@@ -13,6 +13,29 @@ function getSupabase() {
   )
 }
 
+// stripe_customer_idでplanを更新するヘルパー
+async function updatePlanByCustomerId(customerId: string, plan: string, label: string) {
+  const supabase = getSupabase()
+  const { data, error } = await supabase
+    .from('companies')
+    .update({ plan, updated_at: new Date().toISOString() })
+    .eq('stripe_customer_id', customerId)
+    .select('id')
+
+  if (error) {
+    console.error(`${label} DB更新エラー:`, error)
+    return { success: false, error }
+  }
+
+  if (!data || data.length === 0) {
+    console.warn(`${label} stripe_customer_id=${customerId} に該当する会社が見つかりません`)
+    return { success: true, error: null }
+  }
+
+  console.log(`${label}: stripe_customer_id=${customerId}, company_id=${data[0].id}`)
+  return { success: true, error: null }
+}
+
 // Vercelでraw bodyを取得するための設定
 export const config = {
   api: {
@@ -46,7 +69,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (webhookSecret && sig) {
       event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
     } else {
-      // webhook secret未設定時はパース（開発用）
       event = JSON.parse(rawBody.toString()) as Stripe.Event
       console.warn('STRIPE_WEBHOOK_SECRET未設定: 署名検証をスキップしています')
     }
@@ -55,15 +77,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Webhook signature verification failed' })
   }
 
-  // checkout.session.completed イベント処理
+  console.log('Webhookイベント受信:', event.type)
+
+  // checkout.session.completed — 決済完了時にproに更新
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
     const companyId = session.metadata?.company_id
+    const customerId = typeof session.customer === 'string' ? session.customer : null
 
     if (companyId) {
-      const { error } = await getSupabase()
+      const supabase = getSupabase()
+      const { error } = await supabase
         .from('companies')
-        .update({ plan: 'pro', updated_at: new Date().toISOString() })
+        .update({
+          plan: 'pro',
+          stripe_customer_id: customerId,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', companyId)
 
       if (error) {
@@ -71,27 +101,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({ error: 'プランの更新に失敗しました' })
       }
 
-      console.log(`プランをproに更新: company_id=${companyId}`)
+      console.log(`プランをproに更新: company_id=${companyId}, customer=${customerId}`)
     }
   }
 
-  // customer.subscription.deleted イベント処理（解約時）
+  // customer.subscription.deleted — 解約完了時にfreeに戻す
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object as Stripe.Subscription
-    const companyId = subscription.metadata?.company_id
+    const customerId = typeof subscription.customer === 'string' ? subscription.customer : null
 
-    if (companyId) {
-      const { error } = await getSupabase()
-        .from('companies')
-        .update({ plan: 'free', updated_at: new Date().toISOString() })
-        .eq('id', companyId)
-
-      if (error) {
-        console.error('プラン解約エラー:', error)
+    if (customerId) {
+      const result = await updatePlanByCustomerId(customerId, 'free', '解約完了')
+      if (!result.success) {
         return res.status(500).json({ error: 'プランの更新に失敗しました' })
       }
+    }
+  }
 
-      console.log(`プランをfreeに更新（解約）: company_id=${companyId}`)
+  // customer.subscription.updated — ステータス変更時
+  if (event.type === 'customer.subscription.updated') {
+    const subscription = event.data.object as Stripe.Subscription
+    const customerId = typeof subscription.customer === 'string' ? subscription.customer : null
+
+    if (customerId && subscription.status === 'canceled') {
+      const result = await updatePlanByCustomerId(customerId, 'free', 'サブスク canceled')
+      if (!result.success) {
+        return res.status(500).json({ error: 'プランの更新に失敗しました' })
+      }
     }
   }
 
