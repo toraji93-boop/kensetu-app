@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import SettingsPage from './pages/SettingsPage'
 import DocumentEditPage from './pages/DocumentEditPage'
 import HistoryPage from './pages/HistoryPage'
+import UpgradeSuccessPage from './pages/UpgradeSuccessPage'
 
 export default function AppRoutes() {
   const [company, setCompany] = useState<Company | null>(null)
@@ -43,6 +44,7 @@ export default function AppRoutes() {
       <Route path="/document/new/:docType" element={<DocumentEditPage company={company} />} />
       <Route path="/document/edit/:id" element={<DocumentEditPage company={company} />} />
       <Route path="/history" element={<HistoryPage company={company} />} />
+      <Route path="/upgrade/success" element={<UpgradeSuccessPage onUpdate={setCompany} />} />
       <Route path="*" element={<Navigate to="/app" replace />} />
     </Routes>
   )

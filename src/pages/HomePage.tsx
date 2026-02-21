@@ -16,7 +16,7 @@ export default function HomePage({ company }: Props) {
   const [monthlyCount, setMonthlyCount] = useState(0)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
-  const isPro = company.plan === 'pro'
+  const isPro = (company.plan ?? 'free') === 'pro'
   const remaining = FREE_MONTHLY_LIMIT - monthlyCount
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function HomePage({ company }: Props) {
 
       {/* アップグレードモーダル */}
       {showUpgradeModal && (
-        <UpgradeModal onClose={() => setShowUpgradeModal(false)} />
+        <UpgradeModal companyId={company.id} onClose={() => setShowUpgradeModal(false)} />
       )}
     </div>
   )

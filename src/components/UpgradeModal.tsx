@@ -1,8 +1,36 @@
+import { useState } from 'react'
+
 interface Props {
+  companyId: string
   onClose: () => void
 }
 
-export default function UpgradeModal({ onClose }: Props) {
+export default function UpgradeModal({ companyId, onClose }: Props) {
+  const [loading, setLoading] = useState(false)
+
+  const handleUpgrade = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId }),
+      })
+
+      const data = await res.json()
+
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        console.error('Checkoutセッション作成失敗:', data.error)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error('Checkoutリクエストエラー:', error)
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl">
@@ -49,15 +77,17 @@ export default function UpgradeModal({ onClose }: Props) {
 
         {/* ボタン */}
         <div className="space-y-3">
-          <a
-            href="#"
-            className="block w-full bg-accent text-white font-bold text-center py-3 rounded-xl active:bg-accent-hover transition-colors"
+          <button
+            onClick={handleUpgrade}
+            disabled={loading}
+            className="block w-full bg-accent text-white font-bold text-center py-3 rounded-xl active:bg-accent-hover transition-colors disabled:opacity-50"
           >
-            プロプランに登録する
-          </a>
+            {loading ? '処理中...' : 'プロプランに登録する'}
+          </button>
           <button
             onClick={onClose}
-            className="block w-full text-gray-500 text-sm text-center py-2 active:text-gray-700 transition-colors"
+            disabled={loading}
+            className="block w-full text-gray-500 text-sm text-center py-2 active:text-gray-700 transition-colors disabled:opacity-50"
           >
             閉じる
           </button>
