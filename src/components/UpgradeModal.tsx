@@ -7,9 +7,11 @@ interface Props {
 
 export default function UpgradeModal({ companyId, onClose }: Props) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleUpgrade = async () => {
     setLoading(true)
+    setError('')
     try {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -23,10 +25,12 @@ export default function UpgradeModal({ companyId, onClose }: Props) {
         window.location.href = data.url
       } else {
         console.error('Checkoutセッション作成失敗:', data.error)
+        setError('決済ページの準備に失敗しました。もう一度お試しください。')
         setLoading(false)
       }
-    } catch (error) {
-      console.error('Checkoutリクエストエラー:', error)
+    } catch (err) {
+      console.error('Checkoutリクエストエラー:', err)
+      setError('通信エラーが発生しました。もう一度お試しください。')
       setLoading(false)
     }
   }
@@ -74,6 +78,11 @@ export default function UpgradeModal({ companyId, onClose }: Props) {
             </li>
           </ul>
         </div>
+
+        {/* エラー表示 */}
+        {error && (
+          <p className="text-sm text-red-500 text-center mb-4">{error}</p>
+        )}
 
         {/* ボタン */}
         <div className="space-y-3">

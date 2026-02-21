@@ -15,6 +15,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'companyId is required' })
     }
 
+    // originを確実に取得
+    const protocol = req.headers['x-forwarded-proto'] || 'https'
+    const host = req.headers['x-forwarded-host'] || req.headers.host
+    const baseUrl = host ? `${protocol}://${host}` : 'https://mitsukuru-jp.vercel.app'
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -24,8 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin}/app/upgrade/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/app`,
+      success_url: `${baseUrl}/app/upgrade/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/app`,
       metadata: {
         company_id: companyId,
       },
@@ -39,6 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ url: session.url })
   } catch (error) {
     console.error('Checkoutセッション作成エラー:', error)
-    return res.status(500).json({ error: 'Checkoutセッションの作成に失敗しました' })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return res.status(500).json({ error: message })
   }
 }
